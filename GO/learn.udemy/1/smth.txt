@@ -1,0 +1,5 @@
+https://go.dev/blog/slices-intro
+
+https://tproger.ru/translations/programming-concepts-stack-and-heap
+
+https://go.dev/doc/effective_go

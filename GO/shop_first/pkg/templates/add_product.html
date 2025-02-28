@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Добавить товар</title>
+    <link rel="stylesheet" href="/static/styles/styles.css">
+</head>
+<body>
+    <h1>Добавить товар</h1>
+    <form action="/submit_product" method="post">
+        <label for="name">Название:</label>
+        <input type="text" id="name" name="name" required><br>
+
+        <label for="price">Цена:</label>
+        <input type="number" step="0.01" id="price" name="price" required><br>
+
+        <label for="img_url">URL изображения:</label>
+        <input type="text" id="img_url" name="img_url" required><br>
+
+        <label for="available_quantity">Доступное количество:</label>
+        <input type="number" id="available_quantity" name="available_quantity" required><br>
+
+        <label for="description">Описание:</label>
+        <textarea id="description" name="description" required></textarea><br>
+
+        <label for="description_invisible">Скрытое описание:</label>
+        <textarea id="description_invisible" name="description_invisible" required></textarea><br>
+
+        <button type="submit">Добавить товар</button>
+    </form>
+    <a href="/">Вернуться к списку товаров</a>
+</body>
+</html>

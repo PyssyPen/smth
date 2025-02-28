@@ -1,0 +1,10 @@
+Registration complete
+
+Your API key is: 5fb94eb89d064726ab64c33018f22c23
+
+For help getting started please look at our getting started guide.
+
+We post API status updates and other news on our Twitter feed, 
+so please follow us there if that's important to you:
+
+Follow @NewsAPIorg

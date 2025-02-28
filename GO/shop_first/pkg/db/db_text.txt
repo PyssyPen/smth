@@ -1,0 +1,12 @@
+CREATE TABLE products (
+    id SERIAL PRIMARY KEY,
+    name varchar NOT NULL,
+    price NUMERIC(10, 2) NOT NULL,
+    img_url varchar,
+    available_quantity INT NOT NULL,
+    description varchar,
+	description_invisible varchar 
+);
+
+select * from products
+insert into product

@@ -1,0 +1,6 @@
+var pi rune = 960
+var alpha rune = 940
+var omega rune = 969
+var bang byte = 33
+ 
+fmt.Printf("%v %v %v %v\n", pi, alpha, omega, bang) // Выводит: 960 940 969 33
