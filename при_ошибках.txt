@@ -1,2 +1,7 @@
 Use the command, CTRL+SHIFT+P on windows or COMMAND+SHIFT+P on mac, 
 then search "Developer: reload window", click on it, your vs will reload.
+
+git add .
+git commit -m "vsc 3"
+git push origin master
+git log -n 3 // выведет последние коммиты (в данном случае 3)
