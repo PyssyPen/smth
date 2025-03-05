@@ -30,7 +30,7 @@ func Delete() {
 				if err != nil {
 					return err
 				}
-				println("Удален:", path)
+				//println("Удален:", path)
 			}
 			return nil
 		})
@@ -38,6 +38,7 @@ func Delete() {
 		if err != nil {
 			println("Ошибка:", err)
 		}
+		println("Удалены")
 
 	case "n", "N", "т", "Т":
 		fmt.Println("Логи не удаляются.")

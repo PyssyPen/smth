@@ -39,20 +39,6 @@ func (u User) getActivityInfo() string {
 
 }
 
-func generateUser(count int) []User {
-	user := make([]User, count)
-
-	for i := 0; i < count; i++ {
-		user[i] = User{
-			id:    i + 1,
-			email: fmt.Sprintf("user%d@gmail", i+1),
-			logs:  generateLogs(500 + rand.Intn(500)),
-		}
-	}
-
-	return user
-}
-
 func generateLogs(count int) []logItem {
 	logs := make([]logItem, count)
 
@@ -86,6 +72,19 @@ func saveUserInfo(user User, wg *sync.WaitGroup) error {
 	return nil
 }
 
+func generateUser(count int, user chan User) {
+
+	for i := 0; i < count; i++ {
+		user <- User{
+			id:    i + 1,
+			email: fmt.Sprintf("user%d@gmail", i+1),
+			logs:  generateLogs(500 + rand.Intn(500)),
+		}
+		time.Sleep(time.Millisecond * 10) // тут происходит блокировка
+	}
+	close(user) // нужно обязательно закрывать каналы после использования!
+}
+
 func main() {
 	// для того, чтобы записать логи, надо сделать папку /VSC/GO/learn.udemy/2/logs
 	rand.Seed(time.Now().Unix())
@@ -96,11 +95,12 @@ func main() {
 	// который при наличии задач != 0 и будет уменьшаться до 0,
 	// а когда это произойдет, переключится на следующую горутину
 
-	users := generateUser(100)
+	users := make(chan User, 1000)
+	go generateUser(100, users)
 
-	for _, user := range users {
+	for uSEr := range users {
 		wg.Add(1)
-		go saveUserInfo(user, wg)
+		go saveUserInfo(uSEr, wg)
 	}
 
 	wg.Wait() // не пройдет дальше, пока != 0
