@@ -23,7 +23,7 @@ func parse(ctx context.Context) { // она породила, только он�
 
 func main() {
 	ctx := context.Background()
-	ctx, _ = context.WithTimeout(ctx, time.Second*3) // _ = cancel
+	//ctx, _ = context.WithTimeout(ctx, time.Second*3) // _ = cancel
 	ctx = context.WithValue(ctx, "id", 1)
 
 	// go func() {
