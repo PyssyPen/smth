@@ -1,8 +1,8 @@
 package db
 
 import (
+	"_pyssy_shop/pkg/models"
 	"database/sql"
-	"pyssyshop/pkg/models"
 
 	_ "github.com/lib/pq"
 )

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"_pyssy_shop/pkg/handlers"
 	"log"
 	"net/http"
-	"pyssyshop/pkg/handlers"
 )
 
 func main() {

@@ -1,4 +1,4 @@
-module *pyssy*shop
+module _pyssy_shop
 
 go 1.23.2
 

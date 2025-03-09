@@ -1,10 +1,10 @@
 package handlers
 
 import (
+	"_pyssy_shop/pkg/db"
+	"_pyssy_shop/pkg/models"
 	"html/template"
 	"net/http"
-	"pyssyshop/pkg/db"
-	"pyssyshop/pkg/models"
 	"strconv"
 )
 
