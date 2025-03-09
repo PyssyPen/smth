@@ -2,6 +2,10 @@
 import requests
 import json
 
+
+## КЛЮЧ ДОЛЖЕН ЛЕЖАТЬ В ТОЙ ЖЕ ПАПКЕ, ЧТО И ЭТА ПРОГРАММА И НАЗЫВАТЬСЯ "key.txt"
+
+## это от прошлого владельца
 ## API_KEY = "" # внутри скобок свой апи ключ отсюда https://openrouter.ai/settings/keys
 MODEL = "deepseek/deepseek-r1"
 
