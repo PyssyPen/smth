@@ -1,4 +1,4 @@
-##python3 deepseek.py
+##         python3 deepseek.py
 import requests
 import json
 
@@ -14,7 +14,8 @@ MODEL = "deepseek/deepseek-r1"
 def read_api_key(file_path):
     try:
         with open(file_path, 'r') as file:
-            api_key = file.read().strip()
+            # Читаем только первую строку
+            api_key = file.readline().strip()
             return api_key
     except FileNotFoundError:
         print(f"Файл {file_path} не найден.")
@@ -79,7 +80,7 @@ def chat_stream(prompt):
         print()  # Перенос строки после завершения потока
         return ''.join(full_response)
 def main():
-    print("Чат с DeepSeek-R1 (by Antric)\nДля выхода введите 'exit'\n")
+    print("Чат с DeepSeek-R1\nДля выхода введите 'exit'\n")
 
     while True:
         user_input = input("Вы: ")
