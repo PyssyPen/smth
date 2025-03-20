@@ -1,19 +1,28 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"project/internal/image"
-	//"project/internal/server"
+	"project/internal/key"
 	"project/internal/telegram"
+	//"project/internal/server"
 )
 
 func main() {
+	key, err := key.ReadKey("/home/pyssy/VSC/GO/meme_bot/internal/key/key.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
 	imageService := image.NewImageService()
-	telegramService := telegram.NewTelegramService("7446097555:AAGyOzHRUqwtrdQijoZX1gi-cWQXAS-ZX3Y", imageService)
+	telegramService := telegram.NewTelegramService(key, imageService)
+
 	// создание сервера для работы http
 	//httpServer := server.NewServer(imageService)
 	done := make(chan os.Signal, 1)
