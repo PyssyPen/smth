@@ -1,0 +1,82 @@
+func CreateMenu() *tele.ReplyMarkup {
+	products := tele.InlineButton{
+		Unique: "products_text",
+		Text:   "Продукты",
+	}
+	special_offer := tele.InlineButton{
+		Unique: "so_text",
+		Text:   "Акции",
+	}
+	orders := tele.InlineButton{
+		Unique: "orders_text",
+		Text:   "Заказ",
+	}
+	contacts := tele.InlineButton{
+		Unique: "contacts_text",
+		Text:   "Контакты",
+	}
+	delevery := tele.InlineButton{
+		Unique: "delivery_text",
+		Text:   "Доставка",
+	}
+	info := tele.InlineButton{
+		Unique: "info",
+		Text:   "Инфо о пользователе ",
+	}
+
+	return &tele.ReplyMarkup{
+		InlineKeyboard: [][]tele.InlineButton{
+			{products},
+			{special_offer, orders},
+			{delevery, contacts},
+			{info},
+		},
+	}
+}
+
+
+
+
+
+
+// кнопки в меню снизу
+func CreateMainMenu() *tele.ReplyMarkup {
+	return &tele.ReplyMarkup{
+		ResizeKeyboard: true,
+		ReplyKeyboard: [][]tele.ReplyButton{
+			{
+				{Text: "Меню"},
+				//{Text: "Э"},
+			},
+		},
+	}
+}
+
+
+
+
+
+
+func CreateMeatProductMenu() *tele.ReplyMarkup {
+	meat := tele.InlineButton{
+		Unique: "meat",
+		Text:   "Мясо",
+	}
+	// sausages := tele.InlineButton{
+	// 	Unique: "sausages",
+	// 	Text:   "Сосиски",
+	// }
+	ready := tele.InlineButton{
+		Unique: "ready",
+		Text:   "Готовые продукты",
+	}
+
+	// Создайте и верните клавиатуру с этими кнопками
+	return &tele.ReplyMarkup{
+		InlineKeyboard: [][]tele.InlineButton{
+			{meat},
+			//{sausages},
+			{ready},
+		},
+	}
+}

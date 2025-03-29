@@ -1,0 +1,205 @@
+
+
+
+
+
+func RegisterHandlers(bot *tele.Bot) {
+	bot.Handle("/start", startHandler)
+	bot.Handle("/help", helpHandler)
+	//bot.Handle("/hello", helloHandler)
+	//bot.Handle("/about", aboutHandler)
+	//bot.Handle("/clear_history", clearHistoryHandler)
+	bot.Handle(tele.OnText, messageHandler)
+	bot.Handle(tele.OnCallback, callbackHandler)
+	bot.Handle("/buttons", buttonsHandler)
+}
+
+
+
+
+
+// тут выводим то, что было нажато в сообщении в виде команды (/start)
+// Получена команда /start
+// func buttonsHandler(c tele.Context) error {
+// 	fmt.Println("Получена команда /buttons")
+// 	return c.Send("Пример inline-кнопок:", keyboard.CreateInlineKeyboard())
+// }
+
+
+
+
+
+func clearHistoryHandler(c tele.Context) error {
+	fmt.Println("Получена команда /clear_history")
+	mu.Lock()
+	defer mu.Unlock()
+
+	if currentFile != nil {
+		currentFile.Close()
+		currentFile = nil
+	}
+
+	err := file.DeleteHistoryFile(fileIndex)
+	if err != nil {
+		log.Println("Ошибка удаления файла:", err)
+		return c.Send("Ошибка при очистке истории чата.")
+	}
+
+	return c.Send("История чата очищена!")
+}
+
+
+
+
+
+
+func helloHandler(c tele.Context) error {
+ 	fmt.Println("Получена команда /hello")
+ 	return c.Send("Привет, "+c.Sender().FirstName+"! 👋", keyboard.CreateMainMenu())
+}
+
+
+
+
+
+func aboutHandler(c tele.Context) error {
+	fmt.Println("Получена команда /about")
+	return c.Send("Это тестовый бот созданный с использованием библиотеки telebot.v4", keyboard.CreateMainMenu())
+}
+
+
+
+
+
+
+// отвечеает на все сообщения: вы сказали + ...
+func messageHandler(c tele.Context) error {
+	text := c.Text()
+	fmt.Println("Получено сообщение:", text)
+
+	mu.Lock()
+	if recording && currentFile != nil {
+		_, err := currentFile.WriteString(text + "\n")
+		if err != nil {
+			log.Println("Ошибка записи в файл:", err)
+		}
+	}
+	mu.Unlock()
+
+	return c.Send("Вы сказали: "+text, keyboard.CreateMainMenu())
+}
+
+
+
+
+
+
+// тут выводим нужное меню из нижних кнопок
+// Получено сообщение: Привет
+func messageHandler(c tele.Context) error {
+	text := c.Text()
+	fmt.Println("Получено сообщение:", text)
+	// fmt.Printf("Получено сообщение: %s мы его обрабытываем", text)
+	// c.Send("Получено сообщение: %s мы его обрабытываем", text)
+
+	//return c.Send("КНОПКА СНИЗУ: "+text, keyboard.CreateMainMenu())
+	return c.Send("Меню:", keyboard.CreateMenu()) //"Меню:",
+}
+
+
+
+
+
+
+
+
+// УБРАТЬ // В НУЖНЫХ КНОПКАХ
+func helpHandler(c tele.Context) error {
+	fmt.Println("Получена команда /help")
+	helpText := `Доступные команды:
+/start - Начать работу
+/help - Помощь
+// /hello - Приветствие
+// /about - Информация о боте
+/buttons - Пример кнопок
+// /clear_history - Очистить историю чата`
+	return c.Send(helpText, keyboard.CreateMainMenu())
+}
+
+
+
+
+
+
+
+func callbackHandler(c tele.Context) error {
+
+    switch callbackData {
+    case "start_record":
+		mu.Lock()
+		if !recording {
+			var err error
+			currentFile, fileIndex, err = file.CreateHistoryFile(fileIndex)
+			if err != nil {
+				log.Println("Ошибка создания файла:", err)
+				return c.Send("Ошибка при начале записи.")
+			}
+			recording = true
+			return c.Send("Запись начата!")
+		}
+		mu.Unlock()
+		return c.Send("Запись уже идет!")
+	case "stop_record":
+		mu.Lock()
+		if recording {
+			if currentFile != nil {
+				currentFile.Close()
+				currentFile = nil
+			}
+			recording = false
+			return c.Send("Запись остановлена!")
+		}
+		mu.Unlock()
+		return c.Send("Запись уже остановлена!")
+    case "shutdown":
+     	mu.Lock()
+     	if recording && currentFile != nil {
+        		currentFile.Close()
+        		currentFile = nil
+        }
+        	mu.Unlock()
+        	c.Send("Бот выключается...")
+            bot.Stop()
+            return nil
+
+
+
+
+
+
+
+func CreateSausageMenu() *tele.ReplyMarkup {
+	boiledSausage := tele.InlineButton{
+		Unique: "boiled_sausage",
+		Text:   "Вареные колбасы",
+	}
+
+	semiSmokedSausage := tele.InlineButton{
+		Unique: "semi_smoked_sausage",
+		Text:   "Полукопчёные колбасы",
+	}
+
+	smokedSausage := tele.InlineButton{
+		Unique: "smoked_sausage",
+		Text:   "Сырокопчёные колбасы",
+	}
+
+	// Создайте и верните клавиатуру с этими кнопками
+	return &tele.ReplyMarkup{
+		InlineKeyboard: [][]tele.InlineButton{
+			{boiledSausage},
+			{smokedSausage},
+			{semiSmokedSausage},
+		},
+	}
+}

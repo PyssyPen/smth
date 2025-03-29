@@ -1,0 +1,234 @@
+
+/*
+var (
+	recording   bool
+	fileIndex   int
+	currentFile *os.File
+	mu          sync.Mutex
+)
+
+func main() {
+	// Получаем токен бота из переменной окружения
+	token, err := key.ReadKey("/home/pyssy/VSC/GO/m_test_bot/key/key.txt")
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+
+	// Настраиваем параметры бота
+	settings := tele.Settings{
+		Token:  token,
+		Poller: &tele.LongPoller{Timeout: 10 * time.Second},
+	}
+
+	// Создаем экземпляр бота
+	bot, err := tele.NewBot(settings)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Обработчик команды /start
+	bot.Handle("/start", func(c tele.Context) error {
+		fmt.Println("Получена команда /start")
+		return c.Send("Привет! Я тестовый бот 🚀\nИспользуй /help для списка команд", createMainMenu())
+	})
+
+	// Обработчик команды /help
+	bot.Handle("/help", func(c tele.Context) error {
+		fmt.Println("Получена команда /help")
+		helpText := `Доступные команды:
+/start - Начать работу
+/help - Помощь
+/hello - Приветствие
+/about - Информация о боте
+/buttons - Пример кнопок
+/clear_history - Очистить историю чата`
+		return c.Send(helpText, createMainMenu())
+	})
+
+	// Обработчик команды /hello
+	bot.Handle("/hello", func(c tele.Context) error {
+		fmt.Println("Получена команда /hello")
+		return c.Send("Привет, "+c.Sender().FirstName+"! 👋", createMainMenu())
+	})
+
+	// Обработчик команды /about
+	bot.Handle("/about", func(c tele.Context) error {
+		fmt.Println("Получена команда /about")
+		return c.Send("Это тестовый бот созданный с использованием библиотеки telebot.v4", createMainMenu())
+	})
+
+	// Обработчик команды /clear_history
+	bot.Handle("/clear_history", func(c tele.Context) error {
+		fmt.Println("Получена команда /clear_history")
+		mu.Lock()
+		defer mu.Unlock()
+
+		if currentFile != nil {
+			currentFile.Close()
+			currentFile = nil
+		}
+
+		// Удаляем файл с историей чата
+		fileName := fmt.Sprintf("%d.txt", fileIndex)
+		err := os.Remove(fileName)
+		if err != nil {
+			log.Println("Ошибка удаления файла:", err)
+			return c.Send("Ошибка при очистке истории чата.")
+		}
+
+		return c.Send("История чата очищена!")
+	})
+
+	// Обработчик для обычных сообщений
+	bot.Handle(tele.OnText, func(c tele.Context) error {
+		text := c.Text()
+		fmt.Println("Получено сообщение:", text)
+
+		mu.Lock()
+		if recording && currentFile != nil {
+			_, err := currentFile.WriteString(text + "\n")
+			if err != nil {
+				log.Println("Ошибка записи в файл:", err)
+			}
+		}
+		mu.Unlock()
+
+		return c.Send("Вы сказали: "+text, createMainMenu())
+	})
+
+	// Обработчик для inline-кнопок
+	bot.Handle(tele.OnCallback, func(c tele.Context) error {
+		callback := c.Callback()
+		if callback == nil {
+			fmt.Println("Callback is nil")
+			return c.Send("Ошибка обработки callback-запроса.")
+		}
+
+		callbackData := strings.TrimSpace(callback.Data)
+		fmt.Println("Получен callback:", callbackData)
+
+		switch callbackData {
+		case "btn_1":
+			return c.Send("Вы нажали Кнопку 1!")
+		case "btn_2":
+			return c.Send("Вы нажали Кнопку 2!")
+		case "hide":
+			return c.Send("Клавиатура скрыта!", &tele.ReplyMarkup{RemoveKeyboard: true})
+		case "show":
+			return c.Send("Клавиатура показана!", createMainMenu())
+		case "start_record":
+			mu.Lock()
+			if !recording {
+				fileIndex++
+				fileName := fmt.Sprintf("%d.txt", fileIndex)
+				var err error
+				currentFile, err = os.Create(fileName)
+				if err != nil {
+					log.Println("Ошибка создания файла:", err)
+					return c.Send("Ошибка при начале записи.")
+				}
+				recording = true
+				return c.Send("Запись начата!")
+			}
+			mu.Unlock()
+			return c.Send("Запись уже идет!")
+		case "stop_record":
+			mu.Lock()
+			if recording {
+				if currentFile != nil {
+					currentFile.Close()
+					currentFile = nil
+				}
+				recording = false
+				return c.Send("Запись остановлена!")
+			}
+			mu.Unlock()
+			return c.Send("Запись уже остановлена!")
+		case "shutdown":
+			mu.Lock()
+			if recording && currentFile != nil {
+				currentFile.Close()
+				currentFile = nil
+			}
+			mu.Unlock()
+			c.Send("Бот выключается...")
+			bot.Stop()
+			return nil
+		default:
+			return c.Send("Неизвестная кнопка!")
+		}
+	})
+
+	// Пример сообщения с кнопками
+	bot.Handle("/buttons", func(c tele.Context) error {
+		fmt.Println("Получена команда /buttons")
+		// Создаем кнопки
+		btn1 := tele.InlineButton{
+			Unique: "btn_1",
+			Text:   "Кнопка 1",
+		}
+		btn2 := tele.InlineButton{
+			Unique: "btn_2",
+			Text:   "Кнопка 2",
+		}
+		hideBtn := tele.InlineButton{
+			Unique: "hide",
+			Text:   "Скрыть",
+		}
+		showBtn := tele.InlineButton{
+			Unique: "show",
+			Text:   "Показать",
+		}
+		startRecordBtn := tele.InlineButton{
+			Unique: "start_record",
+			Text:   "Начать запись",
+		}
+		stopRecordBtn := tele.InlineButton{
+			Unique: "stop_record",
+			Text:   "Остановить запись",
+		}
+		shutdownBtn := tele.InlineButton{
+			Unique: "shutdown",
+			Text:   "Выключить бота",
+		}
+
+		// Создаем клавиатуру
+		menu := &tele.ReplyMarkup{
+			InlineKeyboard: [][]tele.InlineButton{
+				{btn1, btn2},
+				{hideBtn, showBtn},
+				{startRecordBtn, stopRecordBtn},
+				{shutdownBtn},
+			},
+		}
+
+		// Отправляем сообщение с клавиатурой
+		return c.Send("Пример inline-кнопок:", menu)
+	})
+
+	fmt.Println("Бот запущен...")
+	bot.Start()
+}
+
+// Функция для создания основного меню
+func createMainMenu() *tele.ReplyMarkup {
+	return &tele.ReplyMarkup{
+		ResizeKeyboard: true,
+		ReplyKeyboard: [][]tele.ReplyButton{
+			{
+				{Text: "Привет"},
+				{Text: "О боте"},
+			},
+			{
+				{Text: "Помощь"},
+				{Text: "Кнопки"},
+			},
+			{
+				{Text: "Скрыть"},
+				{Text: "Показать"},
+			},
+		},
+	}
+}
+*/

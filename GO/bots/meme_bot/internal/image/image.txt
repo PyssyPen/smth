@@ -1,0 +1,65 @@
+вот такое решение мне предлагает иишка, по возможному решению проблемы центрирования текста при рисовании мема
+
+
+
+
+
+
+
+
+можно ли через библиотеку freetype для golang узнать количество писелей для написания какого-то текста с определенным размеров шрифта? 
+
+Да, вы можете использовать библиотеку golang.org/x/image/font/gofont/goregular вместе с библиотекой golang.org/x/image/font и golang.org/x/image/math/fixed для вычисления количества пикселей, необходимых для написания текста с определенным размером шрифта. Вот пример кода, который демонстрирует, как это сделать:
+
+
+package main
+
+import (
+	"fmt"
+	"golang.org/x/image/font"
+	"golang.org/x/image/font/gofont/goregular"
+	"golang.org/x/image/math/fixed"
+	"image"
+	"image/color"
+	"image/draw"
+)
+
+func main() {
+	// Создаем изображение для рисования текста
+	img := image.NewRGBA(image.Rect(0, 0, 400, 200))
+	draw.Draw(img, img.Bounds(), &image.Uniform{color.White}, image.Point{}, draw.Src)
+
+	// Создаем контекст для рисования
+	d := &font.Drawer{
+		Dst:  img,
+		Src:  image.NewUniform(color.Black),
+		Face: goregular.Regular(12), // Устанавливаем размер шрифта
+	}
+
+	// Текст, который мы хотим измерить
+	text := "Hello, World!"
+
+	// Вычисляем размеры текста
+	dot := fixed.Point26_6{X: fixed.I(10), Y: fixed.I(100)} // Начальная точка для рисования
+	advance, ok := d.DrawString(text, dot)
+	if !ok {
+		fmt.Println("Ошибка при рисовании текста")
+		return
+	}
+
+	// Вычисляем ширину и высоту текста
+	width := advance.X.Floor()
+	height := d.Face.Metrics().Height.Floor()
+
+	// Выводим размеры текста
+	fmt.Printf("Ширина текста: %d пикселей\n", width)
+	fmt.Printf("Высота текста: %d пикселей\n", height)
+}
+В этом примере:
+
+Мы создаем изображение для рисования текста.
+Создаем контекст для рисования с помощью font.Drawer, устанавливая шрифт и размер шрифта.
+Вычисляем размеры текста, используя метод DrawString, который возвращает ширину текста в пикселях.
+Вычисляем высоту текста, используя метод Metrics шрифта.
+Выводим ширину и высоту текста в пикселях.
+Этот пример использует шрифт goregular.Regular с размером 12. Вы можете изменить размер шрифта, изменив значение в goregular.Regular(12).

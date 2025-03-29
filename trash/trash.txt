@@ -1,0 +1,185 @@
+/home/pyssy/VSC/PY/deepseek/deepseek.py
+
+1. Запускает HTTP сервер с веб-страницей чата
+2. Запускает Python скрипт как дочерний процесс
+3. Обеспечивает взаимодействие между браузером и Python скриптом через WebSocket
+
+Сначала основной код на Go (main.go):
+```go
+package main
+
+import (
+    "fmt"
+    "log"
+    "net/http"
+    "os/exec"
+    "sync"
+    "github.com/gorilla/websocket"
+)
+
+var upgrader = websocket.Upgrader{
+    CheckOrigin: func(r *http.Request) bool { return true },
+}
+
+type Client struct {
+    conn *websocket.Conn
+}
+
+var clients = make(map[*Client]bool)
+var mutex = &sync.Mutex{}
+
+func main() {
+    // Запускаем Python скрипт
+    cmd := exec.Command("python3", "-u", "your_script.py")
+    stdin, err := cmd.StdinPipe()
+    if err != nil {
+        log.Fatal(err)
+    }
+    stdout, err := cmd.StdoutPipe()
+    if err != nil {
+        log.Fatal(err)
+    }
+    
+    if err := cmd.Start(); err != nil {
+        log.Fatal(err)
+    }
+    defer cmd.Process.Kill()
+
+    // Чтение вывода из Python
+    go func() {
+        buf := make([]byte, 1024)
+        for {
+            n, err := stdout.Read(buf)
+            if err != nil {
+                log.Println("Python output error:", err)
+                return
+            }
+            msg := string(buf[:n])
+            broadcast(msg)
+        }
+    }()
+
+    // HTTP обработчики
+    http.HandleFunc("/", homeHandler)
+    http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+        wsHandler(w, r, stdin)
+    })
+
+    fmt.Println("Server started at :8080")
+    log.Fatal(http.ListenAndServe(":8080", nil))
+}
+
+func homeHandler(w http.ResponseWriter, r *http.Request) {
+    fmt.Fprintf(w, `
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Chat</title>
+    </head>
+    <body>
+        <div id="chat" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"></div>
+        <input type="text" id="input" placeholder="Type message..." style="width: 300px; padding: 5px;">
+        <button onclick="sendMessage()">Send</button>
+        
+        <script>
+            const ws = new WebSocket('ws://' + window.location.host + '/ws');
+            const chat = document.getElementById('chat');
+            
+            ws.onmessage = function(event) {
+                chat.innerHTML += '<div>' + event.data + '</div>';
+                chat.scrollTop = chat.scrollHeight;
+            };
+            
+            function sendMessage() {
+                const input = document.getElementById('input');
+                ws.send(input.value);
+                input.value = '';
+            }
+            
+            document.getElementById('input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        </script>
+    </body>
+    </html>
+    `)
+}
+
+func wsHandler(w http.ResponseWriter, r *http.Request, stdin Pipe) {
+    conn, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        log.Print("Upgrade error:", err)
+        return
+    }
+    defer conn.Close()
+
+    client := &Client{conn: conn}
+    mutex.Lock()
+    clients[client] = true
+    mutex.Unlock()
+
+    for {
+        _, msg, err := conn.ReadMessage()
+        if err != nil {
+            break
+        }
+        stdin.Write([]byte(string(msg) + "\n"))
+    }
+
+    mutex.Lock()
+    delete(clients, client)
+    mutex.Unlock()
+}
+
+func broadcast(msg string) {
+    mutex.Lock()
+    defer mutex.Unlock()
+    for client := range clients {
+        err := client.conn.WriteMessage(websocket.TextMessage, []byte(msg))
+        if err != nil {
+            client.conn.Close()
+            delete(clients, client)
+        }
+    }
+}
+```
+
+Пример Python скрипта (your_script.py):
+```python
+import sys
+
+while True:
+    try:
+        message = sys.stdin.readline()
+        print(f"Python received: {message.strip()}")
+        sys.stdout.flush()
+    except KeyboardInterrupt:
+        break
+```
+
+Для работы необходимо:
+1. Установить зависимость Gorilla WebSocket:
+```bash
+go get github.com/gorilla/websocket
+```
+
+2. Создать оба файла в одной директории
+
+3. Запустить Go программу:
+```bash
+go run main.go
+```
+
+Особенности реализации:
+1. Веб-интерфейс доступен по адресу http://localhost:8080
+2. Весь вывод Python скрипта передается в веб-интерфейс
+3. Сообщения из веб-интерфейса передаются в stdin Python скрипта
+4. Используется WebSocket для real-time обновлений
+
+Важные моменты:
+- Флаг `-u` в Python необходим для unbuffered вывода
+- Используется mutex для безопасной работы с подключениями
+- Поддержка нескольких одновременных подключений
+- Автоматическая прокрутка чата вниз при новых сообщениях
+
+Вы можете модифицировать HTML/CSS для улучшения интерфейса и добавить обработку ошибок по своему усмотрению.
