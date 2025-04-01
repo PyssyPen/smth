@@ -1,4 +1,4 @@
-module meat_bot
+module m_test_bot_2
 
 go 1.23.2
 

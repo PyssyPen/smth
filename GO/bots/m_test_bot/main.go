@@ -9,7 +9,7 @@ import (
 
 func main() {
 	// Получаем токен бота из переменной окружения
-	token, err := key.ReadKey("/home/pyssy/VSC/GO/m_test_bot/key/key.txt")
+	token, err := key.ReadKey("/home/pyssy/VSC/GO/bots/m_test_bot/key/key.txt")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
@@ -25,7 +25,6 @@ func main() {
 КНОПКИ СНИЗУ
 
 сосиски убрать
-казый поставить отдельно
 свинину убрать
 конину поставить
 гуся добавить
@@ -33,6 +32,7 @@ func main() {
 пельмени котлеты шашлык убрать
 
 в готовые продукты казылык
+казый поставить отдельно
 
 подждержку можно поставит
 */

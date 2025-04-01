@@ -4,7 +4,7 @@ import (
 	tele "gopkg.in/telebot.v4"
 )
 
-// кнопки в сообщении
+// кнопки внизу
 func CreateMenu() *tele.ReplyMarkup {
 	return &tele.ReplyMarkup{
 		ResizeKeyboard: true,

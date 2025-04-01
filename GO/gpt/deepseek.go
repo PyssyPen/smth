@@ -70,7 +70,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
         <title>Chat</title>
     </head>
     <body>
-        <div id="chat" style="height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"></div>
+        <div id="chat" style="height: 1000px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; margin-bottom: 10px;"></div>
         <input type="text" id="input" placeholder="Type message..." style="width: 300px; padding: 5px;">
         <button onclick="sendMessage()">Send</button>
 
