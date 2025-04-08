@@ -51,7 +51,6 @@ func handleInfoCommand(c tele.Context) error {
 
 func RegisterHandlers(bot *tele.Bot) {
 	bot.Handle("/start", startHandler)
-	bot.Handle("/cart", handleCartCommand)
 	bot.Handle(tele.OnText, messageHandler)
 }
 
@@ -139,7 +138,7 @@ func messageHandler(c tele.Context) error {
 		"Акции": {"Акции", nil, func(c tele.Context) error {
 			return handleCommand(c, "Акции", "говядина.jpg", "so.txt", nil)
 		}},
-		"Корзина":  {"Здесь будут данные о заказе, который формируется покупателем в данный момент", nil, nil},
+		"Корзина":  {"Здесь будут данные о заказе, который формируется покупателем в данный момент", nil, handleCartCommand},
 		"Контакты": {"Здесь будут контакты продавца (и возможно курьера)", nil, nil},
 		"Доставка": {"Здесь будет инфо либо о доставке уже заказанного набора продуктов, либо об доставке в общем", nil, nil},
 		"Говядина": {"Говядина", nil, func(c tele.Context) error {
@@ -147,22 +146,23 @@ func messageHandler(c tele.Context) error {
 			return nil
 		}},
 		"Конина": {"Конина", nil, func(c tele.Context) error {
-			return handleCommand(c, "Конина", "конина.jpg", "конина.txt", nil)
+			return handleCommand(c, "Конина", "конина.jpg", "конина.txt", keyboard.CreateHorseMeat())
 		}},
 		"Курица": {"Курица", nil, func(c tele.Context) error {
-			return handleCommand(c, "Курица", "курица.jpg", "курица.txt", nil)
+			return handleCommand(c, "Курица", "курица.jpg", "курица.txt", keyboard.CreateChicken())
 		}},
 		"Баранина": {"Баранина", nil, func(c tele.Context) error {
-			return handleCommand(c, "Баранина", "баранина.jpg", "баранина.txt", nil)
+			return handleCommand(c, "Баранина", "баранина.jpg", "баранина.txt", keyboard.CreateLamb())
 		}},
 		"Гусь": {"Гусь", nil, func(c tele.Context) error {
-			return handleCommand(c, "Гусь", "гусь.jpg", "гусь.txt", nil)
+			return handleCommand(c, "Гусь", "гусь.jpg", "гусь.txt", keyboard.CreateGoose())
 		}},
 		"Утка": {"Утка", nil, func(c tele.Context) error {
-			return handleCommand(c, "Утка", "утка.jpg", "утка.txt", nil)
+			return handleCommand(c, "Утка", "утка.jpg", "утка.txt", keyboard.CreateDuck())
 		}},
 		"Казылык": {"Казылык", nil, nil},
 		"Тур":     {"Тур", nil, nil},
+		"Тутырма": {"Тутырма", nil, nil},
 	}
 	if text == "Мои данные" {
 		c.Send("Ваши данные:")
@@ -206,9 +206,6 @@ func extractNumber(input string) (float64, error) {
 }
 
 func KgHandler(meatType string, c tele.Context) error {
-	if meatType == "" {
-		return fmt.Errorf(meatType)
-	}
 	text := c.Text()
 	userID := c.Sender().ID
 
@@ -260,6 +257,7 @@ func KgHandler(meatType string, c tele.Context) error {
 	return nil
 }
 
+// кнопки в сообщении
 func RegisterCallback(bot *tele.Bot) {
 	bot.Handle(&keyboard.Steak, func(c tele.Context) error {
 		userID := c.Sender().ID
@@ -267,8 +265,8 @@ func RegisterCallback(bot *tele.Bot) {
 			fmt.Printf("Ошибка логирования: %v\n", err)
 		}
 		fmt.Printf("Выбор вырезки UserID: %d\n", userID)
-		ZeroString = "Вырезка"
 		c.Send("Вы выбрали вырезку!")
+		ZeroString = "Вырезка"
 		return KgHandler(ZeroString, c)
 	})
 	bot.Handle(&keyboard.Ribs, func(c tele.Context) error {
@@ -278,7 +276,8 @@ func RegisterCallback(bot *tele.Bot) {
 		}
 		fmt.Printf("Выбор ребер UserID: %d\n", userID)
 		c.Send("Вы выбрали ребра!")
-		return KgHandler("Ребра", c)
+		ZeroString = "Ребра"
+		return KgHandler(ZeroString, c)
 	})
 	bot.Handle(&keyboard.Mince, func(c tele.Context) error {
 		userID := c.Sender().ID
@@ -287,7 +286,8 @@ func RegisterCallback(bot *tele.Bot) {
 		}
 		fmt.Printf("Выбор фарша UserID: %d\n", userID)
 		c.Send("Вы выбрали фарш!")
-		return KgHandler("Фарш", c)
+		ZeroString = "Фарш"
+		return KgHandler(ZeroString, c)
 	})
 	bot.Handle(&keyboard.Ribeye, func(c tele.Context) error {
 		userID := c.Sender().ID
@@ -296,7 +296,8 @@ func RegisterCallback(bot *tele.Bot) {
 		}
 		fmt.Printf("Выбор рибай UserID: %d\n", userID)
 		c.Send("Вы выбрали рибай!")
-		return KgHandler("Рибай", c)
+		ZeroString = "Рибай"
+		return KgHandler(ZeroString, c)
 	})
 	bot.Handle(&keyboard.Liver, func(c tele.Context) error {
 		userID := c.Sender().ID
@@ -305,7 +306,108 @@ func RegisterCallback(bot *tele.Bot) {
 		}
 		fmt.Printf("Выбор печени UserID: %d\n", userID)
 		c.Send("Вы выбрали печень!")
-		return KgHandler("Печень", c)
+		ZeroString = "Печень"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.FrontThigh, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Ляжка передняя"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор ляжки передней UserID: %d\n", userID)
+		c.Send("Вы выбрали ляжку переднюю!")
+		ZeroString = "Ляжка передняя"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.RearThigh, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Ляжка задняя"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор ляжки задней UserID: %d\n", userID)
+		c.Send("Вы выбрали ляжку заднюю!")
+		ZeroString = "Ляжка задняя"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Lamb, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Баранина"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор баранины UserID: %d\n", userID)
+		c.Send("Вы выбрали баранину!")
+		ZeroString = "Баранина"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Goose, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Гусь"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор гуся UserID: %d\n", userID)
+		c.Send("Вы выбрали гуся!")
+		ZeroString = "Гусь"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Duck, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Утка"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор утки UserID: %d\n", userID)
+		c.Send("Вы выбрали утку!")
+		ZeroString = "Утка"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.HorseMeat, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Конина"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор конины UserID: %d\n", userID)
+		c.Send("Вы выбрали конину!")
+		ZeroString = "Конина"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Chicken, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Курица"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор курицы UserID: %d\n", userID)
+		c.Send("Вы выбрали курицу!")
+		ZeroString = "Курица"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Kazylyk, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Казылык"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор казылыка UserID: %d\n", userID)
+		c.Send("Вы выбрали казылык!")
+		ZeroString = "Казылык"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Turkey, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Тур"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор тур UserID: %d\n", userID)
+		c.Send("Вы выбрали тур!")
+		ZeroString = "Тур"
+		return KgHandler(ZeroString, c)
+	})
+	bot.Handle(&keyboard.Tutyrma, func(c tele.Context) error {
+		userID := c.Sender().ID
+		if err := logMessage(userID, "Нажата кнопка: Тутырма"); err != nil {
+			fmt.Printf("Ошибка логирования: %v\n", err)
+		}
+		fmt.Printf("Выбор тутырмы UserID: %d\n", userID)
+		c.Send("Вы выбрали тутырму!")
+		ZeroString = "Тутырма"
+		return KgHandler(ZeroString, c)
 	})
 }
 
@@ -325,5 +427,7 @@ func handleCartCommand(c tele.Context) error {
 	for product, quantity := range cartItems {
 		message.WriteString(fmt.Sprintf("%s: %.1f кг\n", product, quantity))
 	}
-	return c.Send(message.String(), keyboard.CreateMenu())
+	c.Send(message.String(), keyboard.CreateMenu())
+
+	return nil
 }
