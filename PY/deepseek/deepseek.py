@@ -7,7 +7,7 @@ import json
 
 ## это от прошлого владельца
 ## API_KEY = "" # внутри скобок свой апи ключ отсюда https://openrouter.ai/settings/keys
-MODEL = "deepseek/deepseek-r1"
+MODEL = "deepseek/deepseek-r1:free"
 
 
 

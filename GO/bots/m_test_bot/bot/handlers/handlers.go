@@ -116,13 +116,13 @@ func callbackHandler(c tele.Context) error {
 
 	// case "info":
 	// 	user := m.Sender
-	// 	fmt.Printf("User Info:\n")
-	// 	fmt.Printf("User ID: %d\n", user.ID)
-	// 	fmt.Printf("Username: %s\n", user.Username)
-	// 	fmt.Printf("First Name: %s\n", user.FirstName)
-	// 	fmt.Printf("Last Name: %s\n", user.LastName)
-	// 	fmt.Printf("Language Code: %s\n", user.LanguageCode)
-	// 	fmt.Printf("Is Bot: %v\n", user.IsBot)
+	// fmt.Printf("User Info:\n")
+	// fmt.Printf("User ID: %d\n", user.ID)
+	// fmt.Printf("Username: %s\n", user.Username)
+	// fmt.Printf("First Name: %s\n", user.FirstName)
+	// fmt.Printf("Last Name: %s\n", user.LastName)
+	// fmt.Printf("Language Code: %s\n", user.LanguageCode)
+	// fmt.Printf("Is Bot: %v\n", user.IsBot)
 	// 	c.Send("Ваша информация была получена!")
 
 	case "Продукты":

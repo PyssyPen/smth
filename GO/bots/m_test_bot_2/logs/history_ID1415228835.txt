@@ -1,0 +1,8 @@
+[2025-04-03 13:58:16] User Info:
+User ID: 1415228835
+Username: MaryPrety
+First Name: Mary
+Last Name: Prety
+Language Code: ru
+Is Bot: false
+[2025-04-03 13:58:16] /start

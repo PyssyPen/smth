@@ -1,0 +1,8 @@
+[2025-04-03 13:48:42] User Info:
+User ID: 1445855614
+Username: maxniko2903
+First Name: Максим
+Last Name: Николаев
+Language Code: ru
+Is Bot: false
+[2025-04-03 13:58:33] /start
