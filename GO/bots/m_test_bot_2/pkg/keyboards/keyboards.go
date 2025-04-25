@@ -8,10 +8,21 @@ func CreateMenu() *tele.ReplyMarkup {
 		ReplyKeyboard: [][]tele.ReplyButton{
 			{{Text: "Продукты"}, {Text: "Акции"}},
 			{{Text: "Корзина"}, {Text: "Контакты"}},
-			{{Text: "Доставка"}, {Text: "Мои данные"}},
+			{{Text: "Мои заказы"}, {Text: "Мой профиль"}},
 		},
 	}
 }
+func CreateProfileMenu() *tele.ReplyMarkup {
+	return &tele.ReplyMarkup{
+		ResizeKeyboard: true,
+		ReplyKeyboard: [][]tele.ReplyButton{
+			{{Text: "Изменить имя пользователя"}, {Text: "Изменить номер телефона"}},
+			{{Text: "Изменить адрес доставки"}},
+			{{Text: "Меню"}},
+		},
+	}
+}
+
 func CreateMeatProductMenu() *tele.ReplyMarkup {
 	return &tele.ReplyMarkup{
 		ResizeKeyboard: true,
@@ -25,8 +36,7 @@ func CreateReadyMealsMenu() *tele.ReplyMarkup {
 	return &tele.ReplyMarkup{
 		ResizeKeyboard: true,
 		ReplyKeyboard: [][]tele.ReplyButton{
-			{{Text: "Казылык"}, {Text: "Тур"}},
-			{{Text: "Тутырма"}},
+			{{Text: "Казылык"}}, //{Text: "Тутырма"}},
 			{{Text: "Меню"}},
 		},
 	}
@@ -43,6 +53,15 @@ func CreateMeatMenu() *tele.ReplyMarkup {
 	}
 }
 
+func CreateCartMenu() *tele.ReplyMarkup {
+	return &tele.ReplyMarkup{
+		ResizeKeyboard: true,
+		ReplyKeyboard: [][]tele.ReplyButton{
+			{{Text: "Заказать"}, {Text: "Очистить"}},
+		},
+	}
+}
+
 var (
 	Steak      = tele.InlineButton{Unique: "Steak", Text: "Вырезка"}
 	Ribs       = tele.InlineButton{Unique: "Ribs", Text: "Ребра"}
@@ -52,14 +71,14 @@ var (
 	FrontThigh = tele.InlineButton{Unique: "FrontThigh", Text: "Ляжка передняя"}
 	RearThigh  = tele.InlineButton{Unique: "RearThigh", Text: "Ляжка задняя"}
 
-	Lamb      = tele.InlineButton{Unique: "Lamb", Text: "Баранина"}
-	Goose     = tele.InlineButton{Unique: "Goose", Text: "Гусь"}
-	Duck      = tele.InlineButton{Unique: "Duck", Text: "Утка"}
-	HorseMeat = tele.InlineButton{Unique: "HorseMeat", Text: "Конина"}
-	Chicken   = tele.InlineButton{Unique: "Chicken", Text: "Курица"}
-	Kazylyk   = tele.InlineButton{Unique: "Kazylyk", Text: "Казылык"}
-	Turkey    = tele.InlineButton{Unique: "Turkey", Text: "Тур"}
-	Tutyrma   = tele.InlineButton{Unique: "Tutyrma", Text: "Тутырма"}
+	Lamb      = tele.InlineButton{Unique: "Lamb", Text: "Купить Баранину"}
+	Goose     = tele.InlineButton{Unique: "Goose", Text: "Купить Гуся"}
+	Duck      = tele.InlineButton{Unique: "Duck", Text: "Купить Утку"}
+	HorseMeat = tele.InlineButton{Unique: "HorseMeat", Text: "Купить Конину"}
+	Chicken   = tele.InlineButton{Unique: "Chicken", Text: "Купить Курицу"}
+	Kazylyk   = tele.InlineButton{Unique: "Kazylyk", Text: "Купить Казылык"}
+	Turkey    = tele.InlineButton{Unique: "Turkey", Text: "Купить Тур"}
+	Tutyrma   = tele.InlineButton{Unique: "Tutyrma", Text: "Купить Тутырму"}
 )
 
 func CreateKeyboard() *tele.ReplyMarkup {
@@ -121,7 +140,7 @@ func CreateKazylyk() *tele.ReplyMarkup {
 	}
 }
 
-func CreateTurkey() *tele.ReplyMarkup {
+func CreateTur() *tele.ReplyMarkup {
 	return &tele.ReplyMarkup{
 		InlineKeyboard: [][]tele.InlineButton{
 			{Turkey},
