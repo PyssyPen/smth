@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Чаты</title>
+</head>
+<body>
+	<h1>Список чатов</h1>
+	{{range .}}
+		<div class="chat-block">
+			<a href="/chat/{{.ChatID}}"><strong>{{.ChatName}}</strong></a>
+		</div>
+	{{else}}
+		<p>Чатов нет.</p>
+	{{end}}
+</body>
+</html>

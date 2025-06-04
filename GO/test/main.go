@@ -1,15 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"log"
+
+	"test/database"
+	"test/server"
+
+	"github.com/joho/godotenv"
 )
 
-// Пример функции, принимающей строку в качестве параметра
-func greet(name string) {
-	fmt.Printf("Hello, %s!\n", name)
-}
-
 func main() {
-	// Вызов функции с передачей строки
-	greet("Alice")
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found, using system environment variables")
+	}
+
+	database.InitDB()
+	server.StartServer()
 }

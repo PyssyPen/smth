@@ -1,13 +1,13 @@
 package main
 
-import (
-	"fmt"
-)
+// import (
+// 	"fmt"
+// )
 
-type File struct {
-	text string
-}
+// type File struct {
+// 	text string
+// }
 
-func (f *File) read() {
-	fmt.Println(f.text)
-}
+// func (f *File) read() {
+// 	fmt.Println(f.text)
+// }

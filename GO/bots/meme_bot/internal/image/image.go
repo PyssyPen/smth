@@ -24,7 +24,7 @@ func (i *Service) DrawText(inputFileName, topText, bottomText string) (string, e
 	}
 	defer imgFile.Close()
 
-	fontBytes, err := os.ReadFile("/home/pyssy/VSC/GO/meme_bot/fonts/Pragmpla.ttf")
+	fontBytes, err := os.ReadFile("/home/pyssy/VSC/GO/bots/meme_bot/fonts/Pragmpla.ttf")
 	if err != nil {
 		return "", err
 	}

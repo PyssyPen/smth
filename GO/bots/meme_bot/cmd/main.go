@@ -14,7 +14,7 @@ import (
 )
 
 func main() {
-	key, err := key.ReadKey("/home/pyssy/VSC/GO/meme_bot/internal/key/key.txt")
+	key, err := key.ReadKey("/home/pyssy/VSC/GO/bots/meme_bot/internal/key/key.txt")
 	if err != nil {
 		fmt.Println("Error:", err)
 		return
