@@ -26,7 +26,7 @@ CREATE TABLE Product (
     description TEXT,
     price DECIMAL(10, 2) NOT NULL,
     stock INT DEFAULT 0,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    image_url VARCHAR(255)
 );
 
 -- Создаем таблицу для избранных товаров
@@ -57,20 +57,22 @@ CREATE TABLE Orders (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Таблица для продуктов в заказе (Order_Items)
-CREATE TABLE Order_Items (
-    order_item_id SERIAL PRIMARY KEY,
-    order_id INT REFERENCES Orders(order_id) ON DELETE CASCADE,
-    product_id INT REFERENCES Product(product_id) ON DELETE CASCADE,
+-- Таблица для продуктов в заказе (order_products)
+
+
+CREATE TABLE order_products (
+    order_id INT REFERENCES orders(order_id),
+    product_id INT REFERENCES products(product_id),
     quantity INT NOT NULL,
-    price DECIMAL(10, 2) NOT NULL
+    PRIMARY KEY (order_id, product_id)
 );
+
 ```
 
-**Для подключения к БД в мрем случае используется логин 'postgres' и пароль '12345'. У вас данные параметры могут отличаться.**
+**Для подключения к БД в моем случае используется логин 'postgres' и пароль '12345'. У вас данные параметры могут отличаться.**
 
 **Изменить параметры подключения можно в файле database.go**
 
-Только после создания базы данных можно запускать REST API. 
+Только после создания базы данных можно запускать REST API..
 
-
+**Для запуска проекта используйте команду `go run cmd/shop/main.go`**

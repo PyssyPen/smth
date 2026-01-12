@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Книги (REST API Go)</title>
+</head>
+<body>
+    <h2>Библиотека</h2>
+    <div id="book-list"></div>
+
+    <h3>Добавить книгу</h3>
+    <input id="title" placeholder="Название"><br>
+    <input id="fname" placeholder="Имя автора"><br>
+    <input id="lname" placeholder="Фамилия автора"><br>
+    <button onclick="addBook()">Добавить</button>
+
+    <script>
+    function refreshBooks() {
+        fetch('/books')
+            .then(r => r.json())
+            .then(data => {
+                let html = '<ul>';
+                data.forEach(book => {
+                    html += '<li>' + book.title + ' (' + book.author.firstname + ' ' + book.author.lastname +
+                        ') <button onclick="removeBook(\'' + book.id + '\')">Удалить</button></li>';
+                });
+                html += '</ul>';
+                document.getElementById('book-list').innerHTML = html;
+            });
+    }
+
+    function addBook() {
+        fetch('/books', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                title: document.getElementById('title').value,
+                author: {
+                    firstname: document.getElementById('fname').value,
+                    lastname: document.getElementById('lname').value
+                }
+            })
+        }).then(refreshBooks);
+    }
+
+    function removeBook(id) {
+        fetch('/books/' + id, {method: 'DELETE'}).then(refreshBooks);
+    }
+
+    refreshBooks();
+    </script>
+</body>
+</html>

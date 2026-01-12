@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Сообщения чата</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body>
+	<h1>Сообщения чата</h1>
+	<a href="/">← Назад к чатам</a>
+	<hr>
+
+	{{range .}}
+	<div class="message">
+		<p class="username-time">{{.UserName}} — {{.FormattedTime}}</p>
+		<p class="content">{{.Message.Message}}</p>
+		{{if and .Message.FileURL (ne .Message.FileURL "-")}}
+			<p>📎 <a href="{{.Message.FileURL}}">{{.Message.FileURL}}</a></p>
+		{{end}}
+	</div>
+	{{else}}
+		<p>Сообщений нет.</p>
+	{{end}}
+</body>
+</html>
